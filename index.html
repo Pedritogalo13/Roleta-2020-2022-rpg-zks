@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Simulador de Combate RPG</title>
+<style>
+  body {
+    font-family: sans-serif;
+    background: #111;
+    color: #eee;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap; /* agora quebra a linha */
+    gap: 20px;
+    margin: 0;
+  }
+  .col {
+    flex: 1 1 300px; /* responsivo: mínimo de 300px */
+    min-width: 280px;
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 8px;
+  }
+  label {
+    display: block;
+    margin: 8px 0;
+  }
+  select, input {
+    width: 100%; /* ocupa largura toda */
+    padding: 8px;
+    margin-top: 5px;
+    background: #222;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 5px;
+  }
+  button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    cursor: pointer;
+    background: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+  }
+  button:hover {
+    background: #555;
+  }
+  .resultado {
+    margin-top: 20px;
+    background: #222;
+    padding: 15px;
+    border-radius: 8px;
+    word-wrap: break-word;
+  }
+</style>
+</head>
+<body>
+<div class="col">
+  <h2>Personagem 1</h2>
+  <input type="text" id="nome1" placeholder="Nome" value="Guerreiro"><br>
+  <label>Altura:<select id="altura1"></select></label>
+  <label>Tipo:<select id="tipo1">
+    <option value="comum">Comum</option>
+    <option value="medio">Médio</option>
+    <option value="forte">Forte</option>
+    <option value="general">General</option>
+  </select></label>
+  <label>Gênero:<select id="genero1">
+    <option value="masc">Masculino</option>
+    <option value="fem">Feminino</option>
+  </select></label>
+  <label>Arma:<select id="arma1"></select></label>
+  <label>Material arma:<select id="materialArma1"></select></label>
+  <label>Armadura:<select id="armadura1"></select></label>
+  <label>Material armadura:<select id="materialArm1"></select></label>
+</div>
+
+<div class="col">
+  <h2>Personagem 2</h2>
+  <input type="text" id="nome2" placeholder="Nome" value="Inimigo"><br>
+  <label>Altura:<select id="altura2"></select></label>
+  <label>Tipo:<select id="tipo2">
+    <option value="comum">Comum</option>
+    <option value="medio">Médio</option>
+    <option value="forte">Forte</option>
+    <option value="general">General</option>
+  </select></label>
+  <label>Gênero:<select id="genero2">
+    <option value="masc">Masculino</option>
+    <option value="fem">Feminino</option>
+  </select></label>
+  <label>Arma:<select id="arma2"></select></label>
+  <label>Material arma:<select id="materialArma2"></select></label>
+  <label>Armadura:<select id="armadura2"></select></label>
+  <label>Material armadura:<select id="materialArm2"></select></label>
+</div>
+
+<div class="col">
+  <h2>Condições</h2>
+  <label>Campo:<select id="campo">
+    <option value="seco">Seco</option>
+    <option value="molhado">Molhado</option>
+    <option value="lama">Lama</option>
+    <option value="neve">Neve</option>
+    <option value="noite">Noite</option>
+    <option value="vento">Vento</option>
+  </select></label>
+  <label>Relevo:<select id="relevo">
+    <option value="plano">Plano</option>
+    <option value="colina">Colina</option>
+    <option value="montanha">Montanha</option>
+    <option value="vale">Vale</option>
+  </select></label>
+  <label>Atacante:<select id="atacante">
+    <option value="1">P1</option>
+    <option value="2">P2</option>
+  </select></label>
+  <label>Parte do corpo:<select id="parte">
+    <option value="cabeca">Cabeça</option>
+    <option value="torso">Torso</option>
+    <option value="braco">Braço</option>
+    <option value="perna">Perna</option>
+  </select></label>
+  <button onclick="duelo()">Atacar!</button>
+  <button onclick="resetar()">Resetar</button>
+  <div id="saida" class="resultado">Resultado: —</div>
+</div>
+
+<script>
+// opções de armas
+let armas=["Espada longa","Espada curta","Machado","Machado de guerra","Lança","Alabarda","Maça","Mangual","Arco","Besta","Adaga","Foice","Martelo de guerra","Espada bastarda","Espada larga","Tridente","Clava","Sabre","Falcione","Katana","Punhos","Chute"];
+// materiais
+let materiais=["Madeira","Bronze","Ferro","Aço","Obsidiana","Mithril","Valiriano"];
+// armaduras
+let armaduras=["Sem armadura","Couro","Malha leve","Malha pesada","Placas leves","Placas pesadas","Escudo"];
+// preencher selects
+function preencher(id,lista){
+  let sel=document.getElementById(id);
+  lista.forEach(e=>{
+    let opt=document.createElement("option");
+    opt.value=e;opt.textContent=e;
+    sel.appendChild(opt);
+  });
+}
+preencher("arma1",armas);preencher("arma2",armas);
+preencher("materialArma1",materiais);preencher("materialArma2",materiais);
+preencher("armadura1",armaduras);preencher("armadura2",armaduras);
+preencher("materialArm1",materiais);preencher("materialArm2",materiais);
+// alturas
+for(let h=100;h<=250;h+=10){
+  ["altura1","altura2"].forEach(id=>{
+    let opt=document.createElement("option");
+    opt.value=h;opt.textContent=h+" cm";
+    document.getElementById(id).appendChild(opt);
+  });
+}
+document.getElementById("altura1").value=170;
+document.getElementById("altura2").value=180;
+
+// personagens
+let personagens={1:{hp:100,status:[]},2:{hp:100,status:[]}};
+
+function atualizar(){
+  ["1","2"].forEach(i=>{
+    personagens[i].nome=document.getElementById("nome"+i).value;
+    personagens[i].altura=parseInt(document.getElementById("altura"+i).value);
+    personagens[i].tipo=document.getElementById("tipo"+i).value;
+    personagens[i].arma=document.getElementById("arma"+i).value;
+    personagens[i].armaMat=document.getElementById("materialArma"+i).value;
+    personagens[i].armadura=document.getElementById("armadura"+i).value;
+    personagens[i].armMat=document.getElementById("materialArm"+i).value;
+  });
+}
+
+function forcaArma(arma,mat){
+  let base=10;
+  if(arma.includes("Espada")) base=15;
+  if(arma.includes("Machado")) base=18;
+  if(arma.includes("Maça")||arma.includes("Martelo")) base=20;
+  if(arma.includes("Lança")||arma.includes("Alabarda")||arma.includes("Tridente")) base=17;
+  if(arma==="Punhos") base=5;
+  if(arma==="Chute") base=6;
+  // material
+  if(mat==="Ferro") base+=2;
+  if(mat==="Aço") base+=4;
+  if(mat==="Obsidiana") base+=6;
+  if(mat==="Mithril") base+=8;
+  if(mat==="Valiriano") base+=15;
+  return base;
+}
+function defesaArmadura(arm,mat){
+  let def=0;
+  if(arm.includes("Couro")) def=5;
+  if(arm.includes("Malha")) def=10;
+  if(arm.includes("Placas")) def=15;
+  if(arm.includes("Escudo")) def+=8;
+  if(mat==="Bronze") def+=1;
+  if(mat==="Ferro") def+=3;
+  if(mat==="Aço") def+=5;
+  if(mat==="Mithril") def+=8;
+  if(mat==="Valiriano") def+=15;
+  return def;
+}
+function chanceQuebra(mat){
+  if(mat==="Madeira") return 0.2;
+  if(mat==="Bronze") return 0.15;
+  if(mat==="Ferro") return 0.1;
+  if(mat==="Aço") return 0.05;
+  if(mat==="Obsidiana") return 0.25;
+  if(mat==="Mithril") return 0.01;
+  if(mat==="Valiriano") return 0.001;
+  return 0.1;
+}
+function duelo(){
+  atualizar();
+  let atacante=document.getElementById("atacante").value;
+  let defensor=(atacante==="1")?"2":"1";
+  let atk=personagens[atacante], def=personagens[defensor];
+  if(atk.hp<=0||def.hp<=0){document.getElementById("saida").innerHTML="⚔ O combate acabou!";return;}
+  
+  let probHit=60;
+  if(atk.tipo==="forte") probHit+=10;
+  if(atk.tipo==="comum") probHit-=10;
+  if(atk.tipo==="general") probHit+=15;
+  
+  let diff=atk.altura-def.altura;
+  if(diff>20) probHit+=5;
+  if(diff<-20) probHit-=10;
+  
+  let r=Math.random();
+  if(r<0.1){document.getElementById("saida").innerHTML=${def.nome} BLOQUEOU o ataque! 🛡;return;}
+  if(r<0.2){document.getElementById("saida").innerHTML=${def.nome} DESVIOU do golpe! 💨;return;}
+  
+  if(Math.random()*100>probHit){
+    document.getElementById("saida").innerHTML=${atk.nome} errou o ataque contra ${def.nome}.;
+    return;
+  }
+  
+  let armaDano=forcaArma(atk.arma,atk.armaMat);
+  let defesa=defesaArmadura(def.armadura,def.armMat);
+  let dano=Math.max(0,armaDano-defesa+Math.floor(Math.random()*5));
+  def.hp-=dano;
+  
+  if(Math.random()<chanceQuebra(atk.armaMat)){
+    atk.arma="Quebrada";atk.armaMat="Madeira";
+    document.getElementById("saida").innerHTML=${atk.nome} acertou ${def.nome} (-${dano} HP), mas a arma QUEBROU! ⚡;
+  }else{
+    document.getElementById("saida").innerHTML=${atk.nome} acertou ${def.nome} com ${atk.arma} de ${atk.armaMat} (-${dano} HP).;
+  }
+  
+  if(def.hp<=0){
+    document.getElementById("saida").innerHTML+=<br>💀 ${def.nome} caiu morto!;
+  }
+  
+  document.getElementById("saida").innerHTML+=`<hr><b>Status:</b><br>
+    ${personagens[1].nome}: ${personagens[1].hp} HP (${personagens[1].arma})<br>
+    ${personagens[2].nome}: ${personagens[2].hp} HP (${personagens[2].arma})`;
+}
+function resetar(){
+  personagens[1].hp=100;personagens[1].arma="";personagens[1].status=[];
+  personagens[2].hp=100;personagens[2].arma="";personagens[2].status=[];
+  document.getElementById("saida").innerHTML="Resultado: —";
+}
+</script>
+</body>
+</html>
